@@ -117,6 +117,26 @@ body {
 }
 @media (max-width: 950px) { .sim-layout { grid-template-columns: 1fr; } }
 
+/* Grille 3 colonnes pour la page Simulation : diagramme | controles | marquage+historique.
+   Objectif : sur grand ecran, tout est visible cote a cote, sans avoir a scroller
+   la page pour voir le marquage et l'historique en meme temps. */
+.sim-layout-3 {
+    display: grid;
+    grid-template-columns: 1.3fr 1fr 1fr;
+    gap: 18px;
+    align-items: start;
+}
+@media (max-width: 1400px) {
+    .sim-layout-3 { grid-template-columns: 1.2fr 1fr; }
+    .sim-layout-3 .info-card { grid-column: 1 / -1; }
+}
+@media (max-width: 900px) {
+    .sim-layout-3 { grid-template-columns: 1fr; }
+    .sim-layout-3 .info-card { grid-column: auto; }
+}
+
+.info-card .history-list { max-height: 320px; }
+
 .diagram-card svg { width: 100%; height: auto; }
 
 .banner {
