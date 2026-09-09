@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+env/
+instance/*.db
+instance/export_rdp_parking.json
+.DS_Store
+*.log
