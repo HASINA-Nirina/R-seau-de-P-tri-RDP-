@@ -3,7 +3,7 @@
 {% block content %}
 <h1>Simulation du Réseau de Petri</h1>
 
-<div class="sim-layout">
+<div class="sim-layout-3">
     <div class="card diagram-card">
         <h3>Réseau (jetons en direct)</h3>
         <div id="diagram-holder"></div>
@@ -29,7 +29,9 @@
             <button id="btn-reset" class="btn danger">↺ Réinitialiser (retour à M0)</button>
             <button id="btn-export" class="btn">⬇ Exporter JSON</button>
         </div>
+    </div>
 
+    <div class="card info-card">
         <h3>Marquage courant</h3>
         <table class="tbl" id="marking-table"></table>
 
