@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Parking Intelligent - RDP{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<header class="topbar">
+    <div class="brand">🅿️ Parking Intelligent <span>| Réseau de Petri</span></div>
+    <nav>
+        <a href="{{ url_for('index') }}">Accueil</a>
+        <a href="{{ url_for('model_page') }}">Modèle</a>
+        <a href="{{ url_for('simulation_page') }}">Simulation</a>
+        <a href="{{ url_for('analysis_page') }}">Analyse</a>
+    </nav>
+</header>
+<main class="content">
+    {% block content %}{% endblock %}
+</main>
+<footer class="footer">
+    Projet RDP — Gestion d'un parking intelligent — ENI Fianarantsoa
+</footer>
+</body>
+</html>

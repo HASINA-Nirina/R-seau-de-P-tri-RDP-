@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Accueil - Parking Intelligent{% endblock %}
+{% block content %}
+<section class="hero">
+    <h1>Gestion d'un Parking Intelligent</h1>
+    <h2>Modélisation, simulation et analyse par Réseau de Petri</h2>
+    <p class="lead">
+        Ce projet modélise le fonctionnement d'un parking (arrivée d'un véhicule,
+        contrôle d'accès, affectation d'une place, stationnement, sortie et
+        paiement) à l'aide d'un <strong>Réseau de Petri</strong> : 7 places,
+        6 transitions, un marquage initial M0, et un moteur qui calcule les
+        transitions franchissables, fait évoluer le marquage, construit les
+        matrices <strong>Pre</strong>, <strong>Post</strong> et <strong>W = Post − Pre</strong>,
+        et détecte les conflits et les blocages.
+    </p>
+    <div class="cta-grid">
+        <a class="cta" href="{{ url_for('model_page') }}">
+            <strong>Nouveau modèle</strong>
+            <span>Voir les places, transitions, arcs</span>
+        </a>
+        <a class="cta" href="{{ url_for('model_page') }}#scenario-feedback">
+            <strong>Charger un scénario</strong>
+            <span>Vide, normal, presque plein, plein, sortie simultanée</span>
+        </a>
+        <a class="cta" href="{{ url_for('simulation_page') }}">
+            <strong>Simulation</strong>
+            <span>Tirer des transitions, suivre le marquage</span>
+        </a>
+        <a class="cta" href="{{ url_for('analysis_page') }}">
+            <strong>Analyse</strong>
+            <span>Matrices Pre/Post/W, conflits, blocage</span>
+        </a>
+        <a class="cta" href="{{ url_for('simulation_page') }}#history-list">
+            <strong>Historique</strong>
+            <span>Liste des transitions franchies</span>
+        </a>
+    </div>
+</section>
+{% endblock %}

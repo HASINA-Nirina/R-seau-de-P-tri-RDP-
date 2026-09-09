@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Analyse - Parking Intelligent{% endblock %}
+{% block content %}
+<h1>Analyse du Réseau de Petri</h1>
+
+<div class="card">
+    <h3>Matrices</h3>
+    <div class="matrices-grid">
+        <div>
+            <h4>Pré</h4>
+            <div id="mat-pre"></div>
+        </div>
+        <div>
+            <h4>Post</h4>
+            <div id="mat-post"></div>
+        </div>
+        <div>
+            <h4>W = Post − Pré</h4>
+            <div id="mat-w"></div>
+        </div>
+    </div>
+</div>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Conflits</h3>
+        <div id="conflicts"></div>
+    </div>
+    <div class="card">
+        <h3>État du réseau</h3>
+        <div id="net-status"></div>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Propriétés (cours RDP)</h3>
+    <div id="properties"></div>
+</div>
+
+<div class="card">
+    <h3>Statistiques</h3>
+    <div id="stats"></div>
+</div>
+
+<script src="{{ url_for('static', filename='js/analysis.js') }}"></script>
+{% endblock %}

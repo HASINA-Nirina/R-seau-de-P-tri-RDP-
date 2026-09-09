@@ -1,0 +1,141 @@
+{% extends "base.html" %}
+{% block title %}Modèle - Parking Intelligent{% endblock %}
+{% block content %}
+<h1>Modèle du Réseau de Petri</h1>
+
+<div class="grid-2">
+    <div class="card">
+        <h3>Places</h3>
+        <table class="tbl">
+            <tr><th>Id</th><th>Signification</th></tr>
+            {% for p, name in places %}
+            <tr><td>{{ p }}</td><td>{{ name }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+    <div class="card">
+        <h3>Transitions</h3>
+        <table class="tbl">
+            <tr><th>Id</th><th>Événement</th></tr>
+            {% for t, name in transitions %}
+            <tr><td>{{ t }}</td><td>{{ name }}</td></tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Arcs (Pré / Post)</h3>
+    <table class="tbl">
+        <tr><th>Transition</th><th>Consomme (Pré)</th><th>Produit (Post)</th><th>Condition spéciale</th></tr>
+        {% for t, name in transitions %}
+        <tr>
+            <td>{{ t }} — {{ name }}</td>
+            <td>{% for p, w in pre.get(t, {}).items() %}{{ w }}×{{ p }} {% endfor %}</td>
+            <td>{% for p, w in post.get(t, {}).items() %}{{ w }}×{{ p }} {% endfor %}</td>
+            <td>{% if inhibitors.get(t) %}Arc inhibiteur : actif seulement si {{ inhibitors.get(t) }} = 0{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    <p class="note">
+        Remarque : T1 et T3 partent tous les deux de P1 → c'est un <strong>conflit structurel</strong>.
+        T2 a besoin d'un jeton dans P2 <em>et</em> dans P3 → c'est une <strong>synchronisation</strong>.
+    </p>
+    <p class="note">
+        Choix de conception : la <strong>topologie</strong> du réseau (P1..P7, T1..T6 et leurs arcs)
+        correspond exactement au modèle proposé dans le cahier des charges (section 5) et est fixée
+        pour garantir la cohérence mathématique du modèle. Ce qui est <strong>configurable par
+        l'utilisateur</strong> est le <strong>marquage initial M0</strong> (ci-dessous), via un
+        formulaire libre ou via l'un des 5 scénarios prédéfinis.
+    </p>
+</div>
+
+<div class="card">
+    <h3>Aperçu graphique du réseau (F4)</h3>
+    <div id="diagram-holder"></div>
+</div>
+
+<div class="card">
+    <h3>Saisir un marquage initial personnalisé (F3)</h3>
+    <p class="note">Indiquez le nombre de jetons pour chaque place, puis cliquez sur « Enregistrer » pour définir M0.</p>
+    <div class="marking-form" id="marking-form"></div>
+    <div class="btn-row">
+        <button id="btn-save-marking" class="btn primary">💾 Enregistrer</button>
+    </div>
+    <p id="marking-feedback" class="note"></p>
+</div>
+
+<div class="card">
+    <h3>Ou choisir un scénario prédéfini (F16)</h3>
+    <div class="scenario-buttons">
+        {% for s in scenarios %}
+        <button class="btn scenario-btn {% if s == current_scenario %}active{% endif %}" data-scenario="{{ s }}">
+            {{ s.replace('_',' ') }}
+        </button>
+        {% endfor %}
+    </div>
+    <p id="scenario-feedback" class="note"></p>
+    <a class="btn primary" id="btn-next" href="{{ url_for('simulation_page') }}">Suivant → Aller à la simulation</a>
+</div>
+
+<script src="{{ url_for('static', filename='js/diagram.js') }}"></script>
+<script>
+let PLACE_IDS_ALL = [];
+
+async function loadModelState() {
+    const res = await fetch('/api/state');
+    const data = await res.json();
+    PLACE_IDS_ALL = data.places.map(p => p.id);
+    renderDiagram(data.places.map(p => [p.id, p.name]), data.transitions.map(t => [t.id, t.name]));
+    updateDiagram(data.marking, data.enabled);
+    buildMarkingForm(data.places, data.marking);
+}
+
+function buildMarkingForm(places, marking) {
+    const holder = document.getElementById('marking-form');
+    holder.innerHTML = places.map(p => `
+        <label class="marking-field">
+            ${p.id} — ${p.name}
+            <input type="number" min="0" value="${marking[p.id] || 0}" id="input-${p.id}">
+        </label>
+    `).join('');
+}
+
+document.getElementById('btn-save-marking').addEventListener('click', async () => {
+    const marking = {};
+    PLACE_IDS_ALL.forEach(p => {
+        marking[p] = parseInt(document.getElementById('input-' + p).value || '0', 10);
+    });
+    const res = await fetch('/api/custom_marking', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({marking})
+    });
+    const data = await res.json();
+    document.getElementById('marking-feedback').textContent =
+        'Marquage initial enregistré : ' + JSON.stringify(data.marking);
+    document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+    updateDiagram(data.marking, data.enabled);
+});
+
+document.querySelectorAll('.scenario-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+        const scenario = btn.dataset.scenario;
+        const res = await fetch('/api/scenario', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({scenario})
+        });
+        const data = await res.json();
+        document.querySelectorAll('.scenario-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('scenario-feedback').textContent =
+            'Scénario "' + scenario + '" chargé. Marquage initial : ' + JSON.stringify(data.marking);
+        updateDiagram(data.marking, data.enabled);
+        buildMarkingForm(data.places, data.marking);
+    });
+});
+
+loadModelState();
+</script>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Simulation - Parking Intelligent{% endblock %}
+{% block content %}
+<h1>Simulation du Réseau de Petri</h1>
+
+<div class="sim-layout">
+    <div class="card diagram-card">
+        <h3>Réseau (jetons en direct)</h3>
+        <div id="diagram-holder"></div>
+        <p id="blocked-banner" class="banner hidden">⚠️ BLOCAGE : aucune transition n'est franchissable.</p>
+    </div>
+
+    <div class="card controls-card">
+        <h3>Franchir une transition</h3>
+
+        <label class="marking-field" style="margin-bottom:10px;">
+            Choisir une transition (parmi les franchissables)
+            <select id="transition-select"></select>
+        </label>
+        <div class="btn-row">
+            <button id="btn-tirer" class="btn primary">▶ Tirer</button>
+            <button id="btn-suivant" class="btn primary">⏭ Suivant (étape auto)</button>
+        </div>
+
+        <h3>Transitions franchissables</h3>
+        <div id="transitions-list" class="transitions-list"></div>
+
+        <div class="btn-row">
+            <button id="btn-reset" class="btn danger">↺ Réinitialiser (retour à M0)</button>
+            <button id="btn-export" class="btn">⬇ Exporter JSON</button>
+        </div>
+
+        <h3>Marquage courant</h3>
+        <table class="tbl" id="marking-table"></table>
+
+        <h3>Historique</h3>
+        <div id="history-list" class="history-list"></div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/diagram.js') }}"></script>
+<script src="{{ url_for('static', filename='js/simulation.js') }}"></script>
+{% endblock %}
